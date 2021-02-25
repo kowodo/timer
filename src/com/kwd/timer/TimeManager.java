@@ -24,6 +24,7 @@ public class TimeManager extends Thread {
     public void run() {
         Duration elapsedPreviousDurationsPlusCurrentProgress;
         System.out.println("Timer thread started");
+        setStopWatchDuration(Duration.ofSeconds(3));
         if (null == this.timeDisplayer) {
             this.timeDisplayer = new ConsoleTimeDisplayer();
         }
@@ -34,6 +35,8 @@ public class TimeManager extends Thread {
                 String timeString = createTimeString(elapsedPreviousDurationsPlusCurrentProgress, true);
                 if (!previousTimeString.equals(timeString)) {
                     timeDisplayer.showTime(timeString);
+                    // TODO remove this after testing
+//                    GUI.alternateColor();
                 }
                 previousTimeString = timeString;
                 if (elapsedPreviousDurationsPlusCurrentProgress.compareTo(stopWatchDuration) >= 0) {
@@ -42,7 +45,7 @@ public class TimeManager extends Thread {
                 }
             }
             try {
-                sleep(50);
+                sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -59,7 +62,12 @@ public class TimeManager extends Thread {
         } else {
             timeToShow = elapsed;
         }
-        return String.format("%02d:%02d:%02d", timeToShow.toHoursPart(), timeToShow.toMinutesPart(), timeToShow.toSecondsPart() > 0 ? timeToShow.toSecondsPart() : 0);
+        return String.format("%02d:%02d:%02d.%03d",
+                timeToShow.toHoursPart(),
+                timeToShow.toMinutesPart(),
+                timeToShow.toSecondsPart() > 0 ? timeToShow.toSecondsPart() : 0,
+                timeToShow.toMillisPart()
+        );
     }
 
     public void startTime() {

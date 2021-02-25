@@ -6,13 +6,21 @@ import java.awt.event.*;
 
 public class GUI {
     JFrame frame;
-    JLabel label;
+    static JLabel label;
     JTextField textField;
     final double fontScalingFactor = 0.6;
     int guiWidth = 280;
     int guiHeight = 30;
     int posX = 0, posY = 0;
     TimeManager timeManager;
+    static Color foregroundColor = Color.BLACK;
+    static Color backgroundColor = Color.LIGHT_GRAY;
+
+    public static void alternateColor() {
+      Color tmpColor = label.getForeground();
+      label.setForeground(label.getBackground());
+      label.setBackground(tmpColor);
+    }
 
     public void setTimeString(String text) {
         label.setText(text);
@@ -99,7 +107,15 @@ public class GUI {
         frame.add(label, BorderLayout.CENTER);
         frame.add(textField, BorderLayout.NORTH);
 
+//        frame.setForeground(backgroundColor);
+//        frame.setBackground(foregroundColor);
+        label.setOpaque(true);
+        label.setForeground(backgroundColor);
+        label.setBackground(foregroundColor);
+
         label.setFont(font);
+        System.out.println(" BG ="+ label.getBackground());
+        System.out.println(" FG ="+ label.getForeground());
 
         textField.setVisible(false);
         textField.setFont(font);
