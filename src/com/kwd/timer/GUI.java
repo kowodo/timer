@@ -13,13 +13,17 @@ public class GUI {
     int guiHeight = 30;
     int posX = 0, posY = 0;
     TimeManager timeManager;
-    static Color foregroundColor = Color.BLACK;
-    static Color backgroundColor = Color.LIGHT_GRAY;
+    static Color foregroundColor = Color.LIGHT_GRAY;
+    static Color backgroundColor = Color.BLACK;
 
     public static void alternateColor() {
       Color tmpColor = label.getForeground();
       label.setForeground(label.getBackground());
       label.setBackground(tmpColor);
+    }
+    public static void resetColors(){
+        label.setBackground(backgroundColor);
+        label.setForeground(foregroundColor);
     }
 
     public void setTimeString(String text) {
@@ -53,7 +57,7 @@ public class GUI {
 
     private void updateFont() {
         final double newFontSize = frame.getSize().height * fontScalingFactor;
-        Font font = new Font("Dialog", 0, (int) newFontSize);
+        Font font = new Font("Dialog", Font.BOLD, (int) newFontSize);
         System.out.println("updateFont() setting font size to: " + newFontSize);
         label.setFont(font);
         textField.setFont(font);
@@ -110,8 +114,8 @@ public class GUI {
 //        frame.setForeground(backgroundColor);
 //        frame.setBackground(foregroundColor);
         label.setOpaque(true);
-        label.setForeground(backgroundColor);
-        label.setBackground(foregroundColor);
+        label.setForeground(foregroundColor);
+        label.setBackground(backgroundColor);
 
         label.setFont(font);
         System.out.println(" BG ="+ label.getBackground());

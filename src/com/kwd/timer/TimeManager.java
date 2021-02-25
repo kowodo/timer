@@ -2,6 +2,7 @@ package com.kwd.timer;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 
 public class TimeManager extends Thread {
     private Duration stopWatchDuration;
@@ -11,6 +12,8 @@ public class TimeManager extends Thread {
     private Duration elapsedPreviousDurationsSum = Duration.ZERO;
     private DisplayTime timeDisplayer;
     private boolean isRunning;
+    private boolean isBlinking;
+    private boolean isCountdown = true;
 
     public void setTimeDisplayer(DisplayTime timeDisplayer) {
         this.timeDisplayer = timeDisplayer;
@@ -23,26 +26,32 @@ public class TimeManager extends Thread {
 
     public void run() {
         Duration elapsedPreviousDurationsPlusCurrentProgress;
+        long blinkingSecond = 0L;
         System.out.println("Timer thread started");
         setStopWatchDuration(Duration.ofSeconds(3));
         if (null == this.timeDisplayer) {
             this.timeDisplayer = new ConsoleTimeDisplayer();
         }
         String previousTimeString = "";
+
         while (true) {
             if (isRunning) {
                 elapsedPreviousDurationsPlusCurrentProgress = elapsedPreviousDurationsSum.plus(Duration.between(currentStartTime, Instant.now()));
-                String timeString = createTimeString(elapsedPreviousDurationsPlusCurrentProgress, true);
+                String timeString = createTimeString(elapsedPreviousDurationsPlusCurrentProgress, isCountdown);
                 if (!previousTimeString.equals(timeString)) {
                     timeDisplayer.showTime(timeString);
-                    // TODO remove this after testing
-//                    GUI.alternateColor();
                 }
                 previousTimeString = timeString;
+                // time finished
                 if (elapsedPreviousDurationsPlusCurrentProgress.compareTo(stopWatchDuration) >= 0) {
                     isRunning = false;
-                    timeDisplayer.showTime(timeString + " DONE");
+                    timeDisplayer.showTime(createTimeString(Duration.ZERO, !isCountdown));
+                    isBlinking = true;
                 }
+            }
+            if (isBlinking && (Instant.now().getEpochSecond() != blinkingSecond)) {
+                GUI.alternateColor();
+                blinkingSecond = Instant.now().getEpochSecond();
             }
             try {
                 sleep(1);
@@ -86,6 +95,8 @@ public class TimeManager extends Thread {
         elapsedPreviousDurationsSum = Duration.ZERO;
         isRunning = false;
         timeDisplayer.showTime(createTimeString(elapsedPreviousDurationsSum, true));
+        isBlinking = false;
+        GUI.resetColors();
     }
 
     public void setNewTime(Duration newTime) {
